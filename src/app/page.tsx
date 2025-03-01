@@ -1,13 +1,15 @@
 "use client"
-import React from 'react'
+import React, { useState } from 'react'
 import axios from 'axios'
 import swal from "sweetalert"
 import { useRouter } from 'next/navigation'
 const Home = () => {
   const router = useRouter()
+  const [loading, setLoading] = useState(false)
 
   const loginHandler = async (e: any) => {
     e.preventDefault()
+    setLoading(true)
     try {
       const formData = new FormData(e.target)
       const emailOrPhone = formData.get("emailOrPhone")
@@ -18,16 +20,19 @@ const Home = () => {
           title: response?.data?.message,
           icon: "success"
         })
+        setLoading(false)
         router.push("/offer")
       } else {
         swal({
           title: response?.data?.message,
           icon: "warning"
         })
+        setLoading(false)
       }
 
 
     } catch (error) {
+      setLoading(false)
       throw new Error(String(error))
 
     }
@@ -59,7 +64,10 @@ const Home = () => {
             type="submit"
             className="w-full mt-4 p-2 bg-blue-500 text-white font-bold rounded-md hover:bg-blue-600 focus:outline-none"
           >
-            Log in
+            {
+              !loading ? "Log in" : <div className=' loading loading-spinner loading-md'></div>
+            }
+
           </button>
         </form>
 
